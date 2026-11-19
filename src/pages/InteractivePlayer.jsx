@@ -5,7 +5,7 @@ import { useSettings } from '../hooks/useSettings';
 import MovieRow from '../components/MovieRow';
 
 const IMG_BASE = 'https://image.tmdb.org/t/p';
-const PROXY_URL = import.meta.env.VITE_PROXY_URL;
+const PROXY_URL = import.meta.env.VITE_PROXY_URL || 'https://onyx-proxy.onyx-movies.workers.dev';
 
 // ── Servers ───────────────────────────────────────────────────────────────────
 const SERVERS = [
@@ -14,8 +14,8 @@ const SERVERS = [
     label: 'Server 1',
     url: (id, type, s, e) =>
       type === 'movie'
-        ? `https://vidlink.pro/movie/${id}?autoplay=true&primaryColor=a855f7`
-        : `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&primaryColor=a855f7`,
+        ? `https://vidlink.pro/movie/${id}?autoplay=true&primaryColor=a855f7&multiLang=true`
+        : `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true&primaryColor=a855f7&multiLang=true`,
   },
   {
     name: 'Vidsrc.to',
@@ -40,6 +40,30 @@ const SERVERS = [
       type === 'movie'
         ? `https://www.2embed.cc/embed/${id}`
         : `https://www.2embed.cc/embedtv/${id}&s=${s}&e=${e}`,
+  },
+  {
+    name: 'VidSrc Multi',
+    label: 'Server 5',
+    url: (id, type, s, e) =>
+      type === 'movie'
+        ? `https://vidsrc.me/embed/movie?tmdb=${id}`
+        : `https://vidsrc.me/embed/tv?tmdb=${id}&sea=${s}&epi=${e}`,
+  },
+  {
+    name: 'AutoEmbed',
+    label: 'Server 6',
+    url: (id, type, s, e) =>
+      type === 'movie'
+        ? `https://player.autoembed.cc/embed/movie/${id}`
+        : `https://player.autoembed.cc/embed/tv/${id}/${s}/${e}`,
+  },
+  {
+    name: 'EmbedSu',
+    label: 'Server 7',
+    url: (id, type, s, e) =>
+      type === 'movie'
+        ? `https://embed.su/embed/movie/${id}`
+        : `https://embed.su/embed/tv/${id}/${s}/${e}`,
   },
 ];
 
@@ -90,6 +114,16 @@ const InteractivePlayer = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [id]);
+
+  // Guard against iframe ad scripts attempting to hijack or redirect the top window
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      return (e.returnValue = '');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -337,7 +371,7 @@ const InteractivePlayer = () => {
             {/* Server Selector */}
             <div className="flex flex-col gap-3">
               <span className="text-[9px] font-black uppercase tracking-widest opacity-40">Frequency Shift (Servers)</span>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2">
                 {SERVERS.map((s, idx) => {
                   const isActive = activeServer === idx;
                   return (

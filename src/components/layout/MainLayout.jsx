@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from '../Navbar';
 import MobileBottomNav from '../MobileBottomNav';
+import Footer from './Footer';
 
 const MainLayout = () => {
   const location = useLocation();
@@ -57,6 +58,7 @@ const MainLayout = () => {
       <main className="relative z-0 pb-36 md:pb-0">
         <Outlet />
       </main>
+      <Footer />
       <MobileBottomNav />
       
       {/* Global Aesthetics Overlay */}
