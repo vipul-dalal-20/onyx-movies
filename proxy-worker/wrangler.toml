@@ -1,0 +1,15 @@
+name = "onyx-proxy"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+
+# Free tier: 100,000 requests/day — more than enough for personal use
+# Upgrade to Workers Paid ($5/mo) for 10M req/day if you go public
+
+[vars]
+# Add your Onyx domain here for future CORS origin checks
+ONYX_DOMAIN = "https://your-onyx-domain.com"
+
+# Routes (optional — uncomment and set your domain after deploying)
+# [[routes]]
+# pattern = "proxy.your-domain.com/*"
+# zone_name = "your-domain.com"
